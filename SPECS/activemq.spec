@@ -1,5 +1,5 @@
 %global _name          activemq
-%global _version       5.7.0
+%global _version       5.9.1
 %global _prefix /usr/share
 
 Summary: Apache ActiveMQ
