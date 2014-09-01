@@ -68,7 +68,7 @@ install *.txt ${RPM_BUILD_ROOT}%{docsdir}
 #install *.html ${RPM_BUILD_ROOT}%{docsdir}
 cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
 
-install bin/run.jar bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
+install bin/activemq.jar bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
 #install --directory ${RPM_BUILD_ROOT}%{_bindir}
 #%{__ln_s} -f %{homedir}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
 
