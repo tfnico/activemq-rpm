@@ -64,7 +64,8 @@ install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}/%{_sysco
 install %{_sourcedir}/activemq.init.rh ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
 
 # Bin and doc dirs
-install *.txt *.html ${RPM_BUILD_ROOT}%{docsdir}
+install *.txt ${RPM_BUILD_ROOT}%{docsdir}
+#install *.html ${RPM_BUILD_ROOT}%{docsdir}
 cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
 
 install bin/run.jar bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
