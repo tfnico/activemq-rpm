@@ -17,6 +17,7 @@ Source4: activemq.jetty.xml
 Source5: activemq.credentials.properties
 Source6: activemq.jetty-realm.properties
 Source7: activemq-wrapper.conf
+Source8: postgresql-9.3-1102.jdbc4.jar
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildArch: noarch
 Requires: tanukiwrapper >= 3.5.9
@@ -58,6 +59,9 @@ install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}/%{_sysco
 install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/jetty.xml
 install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/log4j.properties
 install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/jetty-realm.properties
+
+# lib file for postgresql jdbc driver
+install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}/%{libdir}/postgresql-9.3-1102.jdbc4.jar
 
 # startup script
 #install bin/activemq ${RPM_BUILD_ROOT}%{_initrddir}/%{name}

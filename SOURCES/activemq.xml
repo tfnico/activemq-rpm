@@ -90,8 +90,9 @@
           http://activemq.apache.org/persistence.html
         -->
         <persistenceAdapter>
-            <kahaDB directory="${activemq.base}/data/kahadb"/>
-        </persistenceAdapter>
+		<!-- use the PostgreSQL persistence bean (configuration see below)-->
+        	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds"/>
+	</persistenceAdapter>
 
         <plugins>
           <!--
@@ -157,6 +158,20 @@
         </transportConnectors>
 
     </broker>
+
+    <!-- PostgreSQL adapter, needs to point to the correct server -->
+    <bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource">
+      <property name="serverName" value="localhost"/>
+      <property name="databaseName" value="activemq"/>
+      <property name="portNumber" value="5432"/>
+      <property name="user" value="activemq"/>
+      <property name="password" value="activemq"/> 
+      <property name="dataSourceName" value="postgres"/>
+      <property name="initialConnections" value="1"/>
+      <property name="maxConnections" value="10"/>
+    </bean>
+
+
 
     <!--
       Enable web consoles, REST and Ajax APIs and demos
