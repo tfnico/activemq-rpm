@@ -20,14 +20,16 @@ Source7: activemq-wrapper.conf
 Source8: postgresql-9.3-1102.jdbc4.jar
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildArch: noarch
-Requires: tanukiwrapper >= 3.5.9
+#Requires: tanukiwrapper >= 3.5.9
+Prefix: /usr/share/activemq
 
 #%define buildver 5.1.0
+%define __jar_repack %{nil}
 
 %define homedir %{_prefix}/%{_name}
 %define libdir %{homedir}/lib
-%define datadir /var/cache/%{_name}
-%define docsdir /usr/share/doc/%{name}-%{version}
+%define datadir %{homedir}/data
+%define docsdir %{homedir}/docs
 
 %description
 ApacheMQ is a JMS Compliant Messaging System
@@ -47,46 +49,37 @@ install --directory ${RPM_BUILD_ROOT}%{libdir}
 install --directory ${RPM_BUILD_ROOT}%{homedir}/webapps
 install --directory ${RPM_BUILD_ROOT}%{datadir}
 install --directory ${RPM_BUILD_ROOT}%{datadir}/data
-install --directory ${RPM_BUILD_ROOT}%{_localstatedir}/log/%{name}
-install --directory ${RPM_BUILD_ROOT}%{_localstatedir}/run/%{name}
-install --directory ${RPM_BUILD_ROOT}%{_sysconfdir}/%{_name}
+install --directory ${RPM_BUILD_ROOT}%{homedir}/log/%{name}
+install --directory ${RPM_BUILD_ROOT}%{homedir}/run/%{name}
+install --directory ${RPM_BUILD_ROOT}%{homedir}/conf
 install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
-install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/activemq.xml
-install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/activemq-wrapper.conf
-install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/credentials.properties
-install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/jetty.xml
-install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/log4j.properties
-install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/jetty-realm.properties
+install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}/%{homedir}/conf/activemq.xml
+install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}/%{homedir}/conf/activemq-wrapper.conf
+install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}/%{homedir}/conf/credentials.properties
+install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}/%{homedir}/conf/jetty.xml
+install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}/%{homedir}/conf/log4j.properties
+install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}/%{homedir}/conf/jetty-realm.properties
 
 # lib file for postgresql jdbc driver
 install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}/%{libdir}/postgresql-9.3-1102.jdbc4.jar
 
 # startup script
 #install bin/activemq ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
-install %{_sourcedir}/activemq.init.rh ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
-
+#install %{_sourcedir}/activemq.init.rh ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
 # Bin and doc dirs
 install *.txt ${RPM_BUILD_ROOT}%{docsdir}
 #install *.html ${RPM_BUILD_ROOT}%{docsdir}
-cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
+#cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
 
 install bin/activemq.jar bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
 #install --directory ${RPM_BUILD_ROOT}%{_bindir}
 #%{__ln_s} -f %{homedir}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
 
 # Runtime directory
-cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
-cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
-
-pushd ${RPM_BUILD_ROOT}%{homedir}
-    [ -d conf ] || %{__ln_s} -f %{_sysconfdir}/%{_name} conf
-    [ -d data ] || %{__ln_s} -f %{datadir}/data data
-    [ -d docs ] || %{__ln_s} -f %{docsdir} docs
-    [ -d log ] || %{__ln_s} -f %{_localstatedir}/log/%{name} log 
-popd
-
+#cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
+#cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
 
 %pre
 # Add the "activemq" user and group
@@ -99,55 +92,15 @@ else
     -s /sbin/nologin -r -d %{homedir} %{name} 2> /dev/null || :
 fi
 
-# backup and move original config files
-if [ -e /etc/%{name}/activemq.xml ]; then
-   mv -f /etc/%{name}/activemq.xml /etc/%{name}/activemq.xml.orig
-fi
-if [ -e /etc/httpd/conf.d/activemq-wrapper.conf ]; then
-   mv -f /etc/httpd/conf.d/activemq-wrapper.conf /etc/httpd/conf.d/activemq-wrapper.conf.orig
-fi
-if [ -e /etc/%{name}/log4j.properties ]; then
-   mv -f /etc/%{name}/log4j.properties /etc/%{name}/log4j.properties.orig
-fi
-if [ -e /etc/%{name}/credentials.properties ]; then
-   mv -f /etc/%{name}/credentials.properties /etc/%{name}/credentials.properties.orig
-fi
-if [ -e /etc/%{name}/jetty.xml ]; then
-   mv -f /etc/%{name}/jetty.xml /etc/%{name}/jetty.xml.orig
-fi
-if [ -e /etc/%{name}/jetty-realm.properties ]; then
-   mv -f /etc/%{name}/jetty-realm.properties /etc/%{name}/jetty-realm.properties.orig
-fi
-
 %post
 # install activemq (but don't activate)
-/sbin/chkconfig --add %{name}
-
-%triggerun -- activemq
-if [ -e /etc/%{name}/activemq.xml ]; then
-   mv -f /etc/%{name}/activemq.xml /etc/%{name}/activemq.xml.orig
-fi
-if [ -e /etc/httpd/conf.d/activemq-wrapper.conf ]; then
-   mv -f /etc/httpd/conf.d/activemq-wrapper.conf /etc/httpd/conf.d/activemq-wrapper.conf.orig
-fi
-if [ -e /etc/%{name}/log4j.properties ]; then
-   mv -f /etc/%{name}/log4j.properties /etc/%{name}/log4j.properties.orig
-fi
-if [ -e /etc/%{name}/credentials.properties ]; then
-   mv -f /etc/%{name}/credentials.properties /etc/%{name}/credentials.properties.orig
-fi
-if [ -e /etc/%{name}/jetty.xml ]; then
-   mv -f /etc/%{name}/jetty.xml /etc/%{name}/jetty.xml.orig
-fi
-if [ -e /etc/%{name}/jetty-realm.properties ]; then
-   mv -f /etc/%{name}/jetty-realm.properties /etc/%{name}/jetty-realm.properties.orig
-fi
+#/sbin/chkconfig --add %{name}
 
 %preun
-if [ $1 = 0 ]; then
-    [ -f /var/lock/subsys/%{name} ] && %{_initrddir}/%{name} stop
-    [ -f %{_initrddir}/%{name} ] && /sbin/chkconfig --del %{name}
-fi
+#if [ $1 = 0 ]; then
+#    [ -f /var/lock/subsys/%{name} ] && %{_initrddir}/%{name} stop
+#    [ -f %{_initrddir}/%{name} ] && /sbin/chkconfig --del %{name}
+#fi
 
 %postun
 
@@ -160,21 +113,28 @@ rm -rf $RPM_BUILD_ROOT
 #%attr(755,root,root) %{_bindir}/activemq-admin
 %{homedir}
 %{homedir}/webapps
+%{homedir}/log
+%{homedir}/conf
 %docdir %{docsdir}
 %{docsdir}
 %{libdir}
-%attr(775,activemq,activemq) %dir %{_localstatedir}/log/%{name}
-%attr(775,activemq,activemq) %dir %{_localstatedir}/run/%{name}
-%attr(755,activemq,activemq) %dir %{datadir}/data
-%attr(755,root,root) %{_initrddir}/%{name}
-%config(noreplace) %{_sysconfdir}/%{_name}/activemq.xml
-%config(noreplace) %{_sysconfdir}/%{_name}/activemq-wrapper.conf
-%config(noreplace) %attr(750,root,activemq) %{_sysconfdir}/%{_name}/credentials.properties
-%config(noreplace) %{_sysconfdir}/%{_name}/jetty.xml
-%config(noreplace) %{_sysconfdir}/%{_name}/jetty-realm.properties
-%config(noreplace) %{_sysconfdir}/%{_name}/log4j.properties
+#%attr(775,activemq,activemq) %dir %{_localstatedir}/log/%{name}
+#%attr(775,activemq,activemq) %dir %{_localstatedir}/run/%{name}
+#%attr(755,activemq,activemq) %dir %{datadir}/data
+#%attr(755,root,root) %{_initrddir}/%{name}
+#%config(noreplace) %{_sysconfdir}/%{_name}/activemq.xml
+#%config(noreplace) %{_sysconfdir}/%{_name}/activemq-wrapper.conf
+#%config(noreplace) %attr(750,root,activemq) %{_sysconfdir}/%{_name}/credentials.properties
+#%config(noreplace) %{_sysconfdir}/%{_name}/jetty.xml
+#%config(noreplace) %{_sysconfdir}/%{_name}/jetty-realm.properties
+#%config(noreplace) %{_sysconfdir}/%{_name}/log4j.properties
 
 %changelog
+* Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 5.9.1
+- Update to activemq 5.9.1
+- Made relocatable
+- Remove tanukiwrapper dependency (launch as standalone dist)
+
 * Thu Jun 28 2012 Matthaus Litteken <matthaus@puppetlabs.com> - 5.6.0-2.pe
 - Update activemq.jetty.xml to 5.6.0 for changed classnames
 
