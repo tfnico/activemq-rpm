@@ -28,11 +28,22 @@
     <bean id="securityConstraint" class="org.eclipse.jetty.util.security.Constraint">
         <property name="name" value="BASIC" />
         <property name="roles" value="admin" />
-        <property name="authenticate" value="false" />
+        <!-- set authenticate=false to disable login -->
+        <property name="authenticate" value="true" />
+    </bean>
+    <bean id="adminSecurityConstraint" class="org.eclipse.jetty.util.security.Constraint">
+        <property name="name" value="BASIC" />
+        <property name="roles" value="admin" />
+         <!-- set authenticate=false to disable login -->
+        <property name="authenticate" value="true" />
     </bean>
     <bean id="securityConstraintMapping" class="org.eclipse.jetty.security.ConstraintMapping">
         <property name="constraint" ref="securityConstraint" />
         <property name="pathSpec" value="/*" />
+    </bean>
+    <bean id="adminSecurityConstraintMapping" class="org.eclipse.jetty.security.ConstraintMapping">
+        <property name="constraint" ref="adminSecurityConstraint" />
+        <property name="pathSpec" value="*.action" />
     </bean>
     <bean id="securityHandler" class="org.eclipse.jetty.security.ConstraintSecurityHandler">
         <property name="loginService" ref="securityLoginService" />
@@ -41,6 +52,7 @@
         </property>
         <property name="constraintMappings">
             <list>
+                <ref bean="adminSecurityConstraintMapping" />
                 <ref bean="securityConstraintMapping" />
             </list>
         </property>
@@ -53,16 +65,26 @@
                             <property name="resourceBase" value="${activemq.home}/webapps/admin" />
                             <property name="logUrlOnStart" value="true" />
                         </bean>
-                        <bean class="org.eclipse.jetty.webapp.WebAppContext">
-                            <property name="contextPath" value="/demo" />
-                            <property name="resourceBase" value="${activemq.home}/webapps/demo" />
-                            <property name="logUrlOnStart" value="true" />
-                        </bean>
+                        <!--
                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
                             <property name="contextPath" value="/fileserver" />
                             <property name="resourceBase" value="${activemq.home}/webapps/fileserver" />
                             <property name="logUrlOnStart" value="true" />
                             <property name="parentLoaderPriority" value="true" />
+                        </bean>
+                        -->
+                        <!--
+                        <bean class="org.eclipse.jetty.webapp.WebAppContext">
+                            <property name="contextPath" value="/demo" />
+                            <property name="resourceBase" value="${activemq.home}/webapps-demo/demo" />
+                            <property name="logUrlOnStart" value="true" />
+                        </bean>
+                        -->
+                        <!-- TODO: Consider disabling this context -->
+                        <bean class="org.eclipse.jetty.webapp.WebAppContext">
+                            <property name="contextPath" value="/api" />
+                            <property name="resourceBase" value="${activemq.home}/webapps/api" />
+                            <property name="logUrlOnStart" value="true" />
                         </bean>
                         <bean class="org.eclipse.jetty.server.handler.ResourceHandler">
                             <property name="directoriesListed" value="false" />
@@ -85,13 +107,19 @@
     <bean id="contexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection">
     </bean>
 
-    <bean id="Server" class="org.eclipse.jetty.server.Server" init-method="start"
+    <bean id="jettyPort" class="org.apache.activemq.web.WebConsolePort" init-method="start">
+             <!-- the default port number for the web console -->
+        <property name="port" value="8161"/>
+    </bean>
+
+    <bean id="Server" depends-on="jettyPort" class="org.eclipse.jetty.server.Server" init-method="start"
         destroy-method="stop">
 
         <property name="connectors">
             <list>
                 <bean id="Connector" class="org.eclipse.jetty.server.nio.SelectChannelConnector">
-                    <property name="port" value="8161" />
+                     <!-- see the jettyPort bean -->
+                    <property name="port" value="#{systemProperties['jetty.port']}" />
                 </bean>
                 <!--
                     Enable this connector if you wish to use https with web console
