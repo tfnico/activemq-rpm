@@ -78,8 +78,8 @@ install bin/activemq.jar bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
 #%{__ln_s} -f %{homedir}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
 
 # Runtime directory
-#cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
-#cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
+cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
+cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
 
 %pre
 # Add the "activemq" user and group
