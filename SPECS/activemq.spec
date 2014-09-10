@@ -10,7 +10,7 @@ License: ASL 2.0
 Group: System Environment/Daemons
 URL: http://activemq.apache.org/
 Source0: http://www.apache.org/dist//activemq/apache-activemq/%{version}/apache-activemq-%{version}-bin.tar.gz
-Source1: activemq.init.rh
+#Source1: activemq.init.rh
 Source2: activemq.xml
 Source3: activemq.log4j.properties
 Source4: activemq.jetty.xml
@@ -24,6 +24,7 @@ BuildArch: noarch
 Prefix: /usr/share/activemq
 
 #%define buildver 5.1.0
+#Avoid doing arcane stuff with jars, silly rpm
 %define __jar_repack %{nil}
 
 %define homedir %{_prefix}/%{_name}
@@ -52,7 +53,7 @@ install --directory ${RPM_BUILD_ROOT}%{datadir}/data
 install --directory ${RPM_BUILD_ROOT}%{homedir}/log/%{name}
 install --directory ${RPM_BUILD_ROOT}%{homedir}/run/%{name}
 install --directory ${RPM_BUILD_ROOT}%{homedir}/conf
-install --directory ${RPM_BUILD_ROOT}%{_initrddir}
+#install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
 install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}/%{homedir}/conf/activemq.xml
@@ -73,7 +74,16 @@ install *.txt ${RPM_BUILD_ROOT}%{docsdir}
 #install *.html ${RPM_BUILD_ROOT}%{docsdir}
 #cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
 
-install bin/activemq.jar bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
+#Install our custom launcher script:
+install %{_sourcedir}/start-activemq-console ${RPM_BUILD_ROOT}/%{homedir}/bin
+# note that we should still search replace DEFAULTPREFIX with whatever prefix is during build.
+# INSTALLPREFIX
+
+install bin/activemq.jar \
+            bin/activemq-admin \
+            bin/activemq \
+        ${RPM_BUILD_ROOT}%{homedir}/bin
+
 #install --directory ${RPM_BUILD_ROOT}%{_bindir}
 #%{__ln_s} -f %{homedir}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
 
@@ -95,6 +105,14 @@ fi
 %post
 # install activemq (but don't activate)
 #/sbin/chkconfig --add %{name}
+echo "Installed activemq under ${RPM_INSTALL_PREFIX}"
+# Correct paths in start script
+
+#First we need to escape all the slashes in the prefix path:
+ESCAPED_PREFIX=$(echo ${RPM_INSTALL_PREFIX}| sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')
+
+#Now correct the paths in the istart  script
+sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-console
 
 %preun
 #if [ $1 = 0 ]; then
@@ -105,19 +123,19 @@ fi
 %postun
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+#rm -rf $RPM_BUILD_ROOT
 
 
 %files
 %defattr(-,root,root)
 #%attr(755,root,root) %{_bindir}/activemq-admin
 %{homedir}
-%{homedir}/webapps
-%{homedir}/log
-%{homedir}/conf
-%docdir %{docsdir}
-%{docsdir}
-%{libdir}
+#%{homedir}/webapps
+#%{homedir}/log
+#%{homedir}/conf
+#%docdir %{docsdir}
+#%{docsdir}
+#%{libdir}
 #%attr(775,activemq,activemq) %dir %{_localstatedir}/log/%{name}
 #%attr(775,activemq,activemq) %dir %{_localstatedir}/run/%{name}
 #%attr(755,activemq,activemq) %dir %{datadir}/data

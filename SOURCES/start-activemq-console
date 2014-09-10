@@ -1,0 +1,3 @@
+#!
+java -Dactivemq.home=PREFIX -Dactivemq.base=PREFIX -Dcom.sun.management.jmxremote -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Xmx512m -Djava.library.path=/usr/lib:/usr/lib64 -classpath  PREFIX/bin/activemq.jar org.apache.activemq.console.Main start
+
