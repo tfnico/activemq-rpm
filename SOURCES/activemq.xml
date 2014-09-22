@@ -143,8 +143,13 @@
             http://activemq.apache.org/configuring-transports.html
         -->
         <transportConnectors>
-            <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
+            <transportConnector name="openwire" uri="ssl://0.0.0.0:61616"/>
         </transportConnectors>
+
+	<sslContext>
+		<sslContext keyStore="file:${activemq.base}/conf/activemq-broker.ks"
+			    keyStorePassword="lVZB6EwSzTeY"/>
+	</sslContext>
 
     </broker>
 
