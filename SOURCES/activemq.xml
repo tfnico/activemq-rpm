@@ -111,7 +111,7 @@
         -->
         <persistenceAdapter>
 		<!-- use the PostgreSQL persistence bean (configuration see below)-->
-        	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds"/>
+        	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds" lockKeepAlivePeriod="10000"/>
 	</persistenceAdapter>
 
 
@@ -159,7 +159,7 @@
       <property name="databaseName" value="activemq"/>
       <property name="portNumber" value="5432"/>
       <property name="user" value="activemq"/>
-      <property name="password" value="activemq"/> 
+      <property name="password" value="activemq"/>
       <property name="dataSourceName" value="postgres"/>
       <property name="initialConnections" value="1"/>
       <property name="maxConnections" value="10"/>
