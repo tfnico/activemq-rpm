@@ -25,7 +25,7 @@ Release: 00
 License: ASL 2.0
 URL: http://activemq.apache.org/
 Group: System Environment/Daemons
-Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+Buildroot: %{_tmppath}/%{dpag_name}-%{version}-%{release}-root
 BuildArch: noarch
 
 Requires(pre): /usr/sbin/useradd
@@ -63,7 +63,7 @@ exit 0
 
 
 %prep
-%setup -q -n apache-activemq-%{version}
+%setup -q -n apache-activemq-%{rhel_version}
 
 %build
 
