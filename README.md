@@ -1,4 +1,4 @@
-activemq-rpm
+rpm-activemq
 ================
 
 Spec and sources to build activemq 5.9.1 binary.
@@ -22,4 +22,3 @@ To build in a local dir:
 To install in different location:
 
     rpm -i --prefix=/var/dhlnl/activemq activemq-5.9.1-1.el6.noarch.rpm
-

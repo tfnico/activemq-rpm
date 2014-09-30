@@ -1,15 +1,39 @@
-%global _name          activemq
-%global _version       5.9.1
-%global _prefix /usr/share
+%define rhel_version 5.9.1
+%define rhel_name activemq
+%define project_id 7p
+%define dpag_prefix /home/dpag%{project_id}
+%define dpag_name c0%{project_id}_%{rhel_name}
+%define package_prefix %{dpag_prefix}/%{dpag_name}
+
+# y7pbamp:uni7pamq
+%define username  y%{project_id}bamq
+%define usergroup uni%{project_id}amq
+
+%define homedir %{package_prefix}
+%define libdir %{package_prefix}/lib
+%define datadir %{package_prefix}/data
+%define docsdir %{package_prefix}/docs
+
+#Avoid doing arcane stuff with jars, silly rpm
+%define __jar_repack %{nil}
 
 Summary: Apache ActiveMQ
-Name: %{_name}
-Version: %{_version}
-Release: 1%{?dist}
+Name: %{dpag_name}
+Prefix: %{package_prefix}
+Version: 05.09.01
+Release: 00
 License: ASL 2.0
-Group: System Environment/Daemons
 URL: http://activemq.apache.org/
-Source0: http://www.apache.org/dist//activemq/apache-activemq/%{version}/apache-activemq-%{version}-bin.tar.gz
+Group: System Environment/Daemons
+Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildArch: noarch
+
+Requires(pre): /usr/sbin/useradd
+#Requires: tanukiwrapper >= 3.5.9
+
+Provides: %{dpag_name} = %{rhel_version}
+
+Source0: http://www.apache.org/dist//activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
 #Source1: activemq.init.rh
 Source2: activemq.xml
 Source3: activemq.log4j.properties
@@ -19,33 +43,38 @@ Source6: activemq.jetty-realm.properties
 Source7: activemq-wrapper.conf
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
-BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildArch: noarch
-#Requires: tanukiwrapper >= 3.5.9
-Prefix: /usr/share/activemq
 
-#%define buildver 5.1.0
-#Avoid doing arcane stuff with jars, silly rpm
-%define __jar_repack %{nil}
 
-%define homedir %{_prefix}/%{_name}
-%define libdir %{homedir}/lib
-%define datadir %{homedir}/data
-%define docsdir %{homedir}/docs
+
+
 
 %description
 ApacheMQ is a JMS Compliant Messaging System
+
+%pre
+getent group %{usergroup} >/dev/null || groupadd %{usergroup}
+mkdir -p %{package_prefix}%{contentdir}
+getent passwd %{username} >/dev/null || \
+  useradd -g %{usergroup} -M -s /sbin/nologin \
+    -d %{package_prefix}%{contentdir} -c "DPAG PI ActiveMQ" %{username}
+chown %{username}:%{usergroup} %{package_prefix}%{contentdir}
+exit 0
+
+
 
 %prep
 %setup -q -n apache-activemq-%{version}
 
 %build
 
+
 %install
 rm -rf $RPM_BUILD_ROOT
+
+
 install --directory ${RPM_BUILD_ROOT}
 install --directory ${RPM_BUILD_ROOT}%{homedir}
-install --directory ${RPM_BUILD_ROOT}%{homedir}/bin
+install --directory ${RPM_BUILD_ROOT}%{homedir}%{_bindir}
 install --directory ${RPM_BUILD_ROOT}%{docsdir}
 install --directory ${RPM_BUILD_ROOT}%{libdir}
 install --directory ${RPM_BUILD_ROOT}%{homedir}/webapps
@@ -96,16 +125,7 @@ install bin/activemq.jar \
 cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
 cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
 
-%pre
-# Add the "activemq" user and group
-/usr/sbin/groupadd -r %{name} 2> /dev/null || :
 
-if getent passwd activemq > /dev/null ; then
-  /usr/sbin/usermod -s /sbin/nologin activemq 2> /dev/null || :
-else
-  /usr/sbin/useradd -c "Apache Activemq" -g %{name} \
-    -s /sbin/nologin -r -d %{homedir} %{name} 2> /dev/null || :
-fi
 
 %post
 # install activemq (but don't activate)
@@ -128,13 +148,13 @@ sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-conso
 %postun
 
 %clean
-#rm -rf $RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT
+
 
 
 %files
-%defattr(-,root,root)
-#%attr(755,root,root) %{_bindir}/activemq-admin
-%{homedir}
+%defattr(-,%{username},%{usergroup})
+%dir %{package_prefix}
 #%{homedir}/webapps
 #%{homedir}/log
 #%{homedir}/conf
@@ -195,10 +215,10 @@ sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-conso
 - Updated to 5.5.0. Adapted to PE.
 
 * Sat Jan 16 2010 R.I.Pienaar <rip@devco.net> 5.3.0-1
-- Adjusted for ActiveMQ 5.3.0 
+- Adjusted for ActiveMQ 5.3.0
 
 * Wed Oct 29 2008 James Casey <james.casey@cern.ch> 5.2.0-2
-- fixed defattr on subpackages 
+- fixed defattr on subpackages
 
 * Tue Sep 02 2008 James Casey <james.casey@cern.ch> 5.2.0-1
 - Upgraded to activemq 5.2.0
@@ -219,14 +239,14 @@ sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-conso
 - fixed up info-provider to give both REST and STOMP endpoints
 
 * Mon Aug 04 2008 James Casey <james.casey@cern.ch> 5.1.0-3
-- reverted out APP_NAME change to ActiveMQ from init.d since it 
+- reverted out APP_NAME change to ActiveMQ from init.d since it
   causes too many problems
 * Mon Aug 04 2008 James Casey <james.casey@cern.ch> 5.1.0-2
 - Added info-provider
 - removed mysql as a requirement
 
 * Thu Mar 20 2008 Daniel RODRIGUES <daniel.rodrigues@cern.ch> - 5.1-SNAPSHOT-1
-- Changed to version 5.1 SNAPSHOT of 18 Mar, fizing AMQ Message Store 
+- Changed to version 5.1 SNAPSHOT of 18 Mar, fizing AMQ Message Store
 - small fixes to makefile
 
 * Fri Dec 14 2007 James CASEY <james.casey@cern.ch> - 5.0.0-3rc4
@@ -258,4 +278,3 @@ sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-conso
 
 * Tue Oct 16 2007 James CASEY <jamesc@lxb6118.cern.ch> - 5.0-SNAPSHOT-1
 - Initial Version
-
