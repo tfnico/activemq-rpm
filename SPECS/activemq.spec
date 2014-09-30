@@ -86,18 +86,18 @@ install --directory ${RPM_BUILD_ROOT}%{homedir}/conf
 #install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
-install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}/%{homedir}/conf/activemq.xml
-install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}/%{homedir}/conf/activemq-wrapper.conf
-install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}/%{homedir}/conf/credentials.properties
-install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}/%{homedir}/conf/jetty.xml
-install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}/%{homedir}/conf/log4j.properties
-install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}/%{homedir}/conf/jetty-realm.properties
+install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}%{homedir}/conf/activemq.xml
+install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}%{homedir}/conf/activemq-wrapper.conf
+install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}%{homedir}/conf/credentials.properties
+install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}%{homedir}/conf/jetty.xml
+install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}%{homedir}/conf/log4j.properties
+install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}%{homedir}/conf/jetty-realm.properties
 
 # SSL Server certificate
-install %{_sourcedir}/activemq-broker.ks  ${RPM_BUILD_ROOT}/%{_sysconfdir}/%{_name}/activemq-broker.ks
+install %{_sourcedir}/activemq-broker.ks  ${RPM_BUILD_ROOT}%{homedir}/conf/activemq-broker.ks
 
 # lib file for postgresql jdbc driver
-install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}/%{libdir}/postgresql-9.3-1102.jdbc4.jar
+install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}%{homedir}/lib/postgresql-9.3-1102.jdbc4.jar
 
 
 # startup script
