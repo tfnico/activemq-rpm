@@ -10,10 +10,6 @@
 %define usergroup uni%{project_id}amq
 
 
-%define libdir %{package_prefix}/lib
-%define datadir %{package_prefix}/data
-%define docsdir %{package_prefix}/docs
-
 #Avoid doing arcane stuff with jars, silly rpm
 %define __jar_repack %{nil}
 
@@ -31,7 +27,7 @@ BuildArch: noarch
 Requires(pre): /usr/sbin/useradd
 #Requires: tanukiwrapper >= 3.5.9
 
-Provides: %{dpag_name} = %{rhel_version}
+Provides: %{rhel_name} = %{rhel_version}
 
 Source0: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
 #Source1: activemq.init.rh
@@ -43,7 +39,7 @@ Source6: activemq.jetty-realm.properties
 Source7: activemq-wrapper.conf
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
-
+Source10: start-activemq-console
 
 
 
@@ -53,11 +49,11 @@ ApacheMQ is a JMS Compliant Messaging System
 
 %pre
 getent group %{usergroup} >/dev/null || groupadd %{usergroup}
-mkdir -p %{package_prefix}%{contentdir}
+mkdir -p %{package_prefix}
 getent passwd %{username} >/dev/null || \
   useradd -g %{usergroup} -M -s /sbin/nologin \
-    -d %{package_prefix}%{contentdir} -c "DPAG PI ActiveMQ" %{username}
-chown %{username}:%{usergroup} %{package_prefix}%{contentdir}
+    -d %{package_prefix} -c "DPAG PI ActiveMQ" %{username}
+chown %{username}:%{usergroup} %{package_prefix}
 exit 0
 
 
@@ -74,57 +70,61 @@ rm -rf $RPM_BUILD_ROOT
 
 install --directory ${RPM_BUILD_ROOT}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_bindir}
-install --directory ${RPM_BUILD_ROOT}%{docsdir}
-install --directory ${RPM_BUILD_ROOT}%{libdir}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/bin
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/docs
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/lib
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}/webapps
-install --directory ${RPM_BUILD_ROOT}%{datadir}
-install --directory ${RPM_BUILD_ROOT}%{datadir}/data
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/data
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/data/data
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}/log/%{name}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}/run/%{name}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}/conf
 #install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
-install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}%{package_prefix}/conf/activemq.xml
-install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}%{package_prefix}/conf/activemq-wrapper.conf
-install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}%{package_prefix}/conf/credentials.properties
-install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}%{package_prefix}/conf/jetty.xml
-install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}%{package_prefix}/conf/log4j.properties
-install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}%{package_prefix}/conf/jetty-realm.properties
+install %{SOURCE2} ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE3} ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE4} ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE5} ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE6} ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE7} ${RPM_BUILD_ROOT}%{package_prefix}/conf
 
-# SSL Server certificate
-install %{_sourcedir}/activemq-broker.ks  ${RPM_BUILD_ROOT}%{package_prefix}/conf/activemq-broker.ks
 
 # lib file for postgresql jdbc driver
-install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}%{package_prefix}/lib/postgresql-9.3-1102.jdbc4.jar
+install  %{SOURCE8} ${RPM_BUILD_ROOT}%{package_prefix}/lib
+
+# SSL Server certificate
+install %{SOURCE9}  ${RPM_BUILD_ROOT}%{package_prefix}/conf
+
+
 
 
 # startup script
 #install bin/activemq ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
 #install %{_sourcedir}/activemq.init.rh ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
 # Bin and doc dirs
-install *.txt ${RPM_BUILD_ROOT}%{docsdir}
-#install *.html ${RPM_BUILD_ROOT}%{docsdir}
-#cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
+install *.txt ${RPM_BUILD_ROOT}%{package_prefix}/docs
+#install *.html ${RPM_BUILD_ROOT}%{package_prefix}/docs
+#cp -r docs ${RPM_BUILD_ROOT}%{package_prefix}/docs
 
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/bin
+
 #Install our custom launcher script:
-install %{_sourcedir}/start-activemq-console ${RPM_BUILD_ROOT}/%{package_prefix}/bin
+install %{SOURCE10} ${RPM_BUILD_ROOT}%{package_prefix}/bin
 # note that we should still search replace DEFAULTPREFIX with whatever prefix is during build.
 # INSTALLPREFIX
 
 
 
-install bin/activemq.jar \
-            bin/activemq-admin \
-            bin/activemq \
-        ${RPM_BUILD_ROOT}%{package_prefix}/bin
+install bin/activemq.jar  ${RPM_BUILD_ROOT}%{package_prefix}/bin
+
+install bin/activemq-admin ${RPM_BUILD_ROOT}%{package_prefix}/bin
+
+install bin/activemq  ${RPM_BUILD_ROOT}%{package_prefix}/bin
 
 #%{__ln_s} -f %{package_prefix}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
 
 # Runtime directory
-cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
+cp -r lib/* ${RPM_BUILD_ROOT}%{package_prefix}/lib
 cp -r webapps/admin ${RPM_BUILD_ROOT}%{package_prefix}/webapps
 
 
@@ -148,6 +148,7 @@ sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-conso
 #fi
 
 %postun
+/bin/find %{package_prefix} -depth -type d -exec rmdir --ignore-fail-on-non-empty {} \;
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -163,10 +164,10 @@ rm -rf $RPM_BUILD_ROOT
 %{package_prefix}/lib
 %{package_prefix}/docs
 
-%docdir %{docsdir}
+%docdir %{package_prefix}/docs
 
 %attr(755,%{username},%{usergroup}) %dir %{package_prefix}/log
-%attr(755,%{username},%{usergroup}) %dir %{datadir}/data
+%attr(755,%{username},%{usergroup}) %dir %{package_prefix}/data/data
 #%attr(755,activemq,activemq) %dir %{_localstatedir}/run/%{name}
 #%attr(755,root,root) %{_initrddir}/%{name}
 #%config(noreplace) %{_sysconfdir}/%{_name}/activemq.xml
@@ -177,7 +178,7 @@ rm -rf $RPM_BUILD_ROOT
 #%config(noreplace) %{_sysconfdir}/%{_name}/log4j.properties
 
 %changelog
-* Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 5.9.1
+* Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 05.09.01
 - Update to activemq 5.9.1
 - Made relocatable
 - Remove tanukiwrapper dependency (launch as standalone dist)
