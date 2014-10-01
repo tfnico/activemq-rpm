@@ -29,7 +29,7 @@ Requires(pre): /usr/sbin/useradd
 
 Provides: %{rhel_name} = %{rhel_version}
 
-Source0: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
+Source: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
 #Source1: activemq.init.rh
 Source2: activemq.xml
 Source3: activemq.log4j.properties
@@ -40,9 +40,6 @@ Source7: activemq-wrapper.conf
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
 Source10: start-activemq-console
-
-
-
 
 %description
 ApacheMQ is a JMS Compliant Messaging System
