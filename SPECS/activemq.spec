@@ -9,7 +9,7 @@
 %define username  y%{project_id}bamq
 %define usergroup uni%{project_id}amq
 
-%define homedir %{package_prefix}
+
 %define libdir %{package_prefix}/lib
 %define datadir %{package_prefix}/data
 %define docsdir %{package_prefix}/docs
@@ -33,7 +33,7 @@ Requires(pre): /usr/sbin/useradd
 
 Provides: %{dpag_name} = %{rhel_version}
 
-Source0: http://www.apache.org/dist//activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
+Source0: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
 #Source1: activemq.init.rh
 Source2: activemq.xml
 Source3: activemq.log4j.properties
@@ -73,31 +73,31 @@ rm -rf $RPM_BUILD_ROOT
 
 
 install --directory ${RPM_BUILD_ROOT}
-install --directory ${RPM_BUILD_ROOT}%{homedir}
-install --directory ${RPM_BUILD_ROOT}%{homedir}%{_bindir}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_bindir}
 install --directory ${RPM_BUILD_ROOT}%{docsdir}
 install --directory ${RPM_BUILD_ROOT}%{libdir}
-install --directory ${RPM_BUILD_ROOT}%{homedir}/webapps
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/webapps
 install --directory ${RPM_BUILD_ROOT}%{datadir}
 install --directory ${RPM_BUILD_ROOT}%{datadir}/data
-install --directory ${RPM_BUILD_ROOT}%{homedir}/log/%{name}
-install --directory ${RPM_BUILD_ROOT}%{homedir}/run/%{name}
-install --directory ${RPM_BUILD_ROOT}%{homedir}/conf
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/log/%{name}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/run/%{name}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/conf
 #install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
-install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}%{homedir}/conf/activemq.xml
-install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}%{homedir}/conf/activemq-wrapper.conf
-install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}%{homedir}/conf/credentials.properties
-install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}%{homedir}/conf/jetty.xml
-install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}%{homedir}/conf/log4j.properties
-install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}%{homedir}/conf/jetty-realm.properties
+install %{_sourcedir}/activemq.xml ${RPM_BUILD_ROOT}%{package_prefix}/conf/activemq.xml
+install %{_sourcedir}/activemq-wrapper.conf ${RPM_BUILD_ROOT}%{package_prefix}/conf/activemq-wrapper.conf
+install %{_sourcedir}/activemq.credentials.properties ${RPM_BUILD_ROOT}%{package_prefix}/conf/credentials.properties
+install %{_sourcedir}/activemq.jetty.xml ${RPM_BUILD_ROOT}%{package_prefix}/conf/jetty.xml
+install %{_sourcedir}/activemq.log4j.properties ${RPM_BUILD_ROOT}%{package_prefix}/conf/log4j.properties
+install %{_sourcedir}/activemq.jetty-realm.properties ${RPM_BUILD_ROOT}%{package_prefix}/conf/jetty-realm.properties
 
 # SSL Server certificate
-install %{_sourcedir}/activemq-broker.ks  ${RPM_BUILD_ROOT}%{homedir}/conf/activemq-broker.ks
+install %{_sourcedir}/activemq-broker.ks  ${RPM_BUILD_ROOT}%{package_prefix}/conf/activemq-broker.ks
 
 # lib file for postgresql jdbc driver
-install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}%{homedir}/lib/postgresql-9.3-1102.jdbc4.jar
+install %{_sourcedir}/postgresql-9.3-1102.jdbc4.jar ${RPM_BUILD_ROOT}%{package_prefix}/lib/postgresql-9.3-1102.jdbc4.jar
 
 
 # startup script
@@ -108,22 +108,24 @@ install *.txt ${RPM_BUILD_ROOT}%{docsdir}
 #install *.html ${RPM_BUILD_ROOT}%{docsdir}
 #cp -r docs ${RPM_BUILD_ROOT}%{docsdir}
 
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}/bin
 #Install our custom launcher script:
-install %{_sourcedir}/start-activemq-console ${RPM_BUILD_ROOT}/%{homedir}/bin
+install %{_sourcedir}/start-activemq-console ${RPM_BUILD_ROOT}/%{package_prefix}/bin
 # note that we should still search replace DEFAULTPREFIX with whatever prefix is during build.
 # INSTALLPREFIX
+
+
 
 install bin/activemq.jar \
             bin/activemq-admin \
             bin/activemq \
-        ${RPM_BUILD_ROOT}%{homedir}/bin
+        ${RPM_BUILD_ROOT}%{package_prefix}/bin
 
-#install --directory ${RPM_BUILD_ROOT}%{_bindir}
-#%{__ln_s} -f %{homedir}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
+#%{__ln_s} -f %{package_prefix}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
 
 # Runtime directory
 cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
-cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
+cp -r webapps/admin ${RPM_BUILD_ROOT}%{package_prefix}/webapps
 
 
 
@@ -153,17 +155,19 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
-%defattr(-,%{username},%{usergroup})
+%defattr(-,root,root)
 %dir %{package_prefix}
-#%{homedir}/webapps
-#%{homedir}/log
-#%{homedir}/conf
-#%docdir %{docsdir}
-#%{docsdir}
-#%{libdir}
-#%attr(775,activemq,activemq) %dir %{_localstatedir}/log/%{name}
-#%attr(775,activemq,activemq) %dir %{_localstatedir}/run/%{name}
-#%attr(755,activemq,activemq) %dir %{datadir}/data
+%{package_prefix}/bin
+%{package_prefix}/webapps
+%{package_prefix}/conf
+%{package_prefix}/lib
+%{package_prefix}/docs
+
+%docdir %{docsdir}
+
+%attr(755,%{username},%{usergroup}) %dir %{package_prefix}/log
+%attr(755,%{username},%{usergroup}) %dir %{datadir}/data
+#%attr(755,activemq,activemq) %dir %{_localstatedir}/run/%{name}
 #%attr(755,root,root) %{_initrddir}/%{name}
 #%config(noreplace) %{_sysconfdir}/%{_name}/activemq.xml
 #%config(noreplace) %{_sysconfdir}/%{_name}/activemq-wrapper.conf
