@@ -35,7 +35,6 @@ Source4: activemq.jetty.xml
 Source5: activemq.credentials.properties
 Source6: activemq.jetty-realm.properties
 Source7: activemq-wrapper.conf
-Buildroot: %{_tmppath}/%{dpag_name}-%{version}-%{release}-root
 BuildArch: noarch
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
@@ -144,7 +143,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,%{username},%{usergroup}) %dir %{datadir}/data
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
-%config %attr(750,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
+%config %attr(640,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/log4j.properties
