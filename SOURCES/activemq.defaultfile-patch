@@ -1,0 +1,19 @@
+diff -uNr apache-activemq-5.9.1.orig/bin/activemq apache-activemq-5.9.1/bin/activemq
+--- apache-activemq-5.9.1.orig/bin/activemq	2014-04-01 02:13:54.000000000 +0200
++++ apache-activemq-5.9.1/bin/activemq	2014-10-02 18:48:58.000000000 +0200
+@@ -29,7 +29,7 @@
+ 
+ # ------------------------------------------------------------------------
+ # CONFIGURATION
+-ACTIVEMQ_CONFIGS="/etc/default/activemq $HOME/.activemqrc"
++ACTIVEMQ_CONFIGS="/home/dpag7p/c07p_activemq/etc/default/activemq"
+ 
+ # Backup invocation parameters
+ COMMANDLINE_ARGS="$@"
+@@ -693,4 +693,4 @@
+     ;;
+   *)
+     invoke_task
+-esac
+\ Kein Zeilenumbruch am Dateiende.
++esac

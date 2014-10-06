@@ -1,0 +1,14 @@
+prefix=`rpm -qa --queryformat '%{instprefixes}' c07p_activemq`
+user="y7pbamq"
+
+name=`basename $0`
+
+ACTIVEMQ_BASE="${prefix}"
+ACTIVEMQ_HOME="${prefix}/usr/activemq"
+ACTIVEMQ_DATA="${prefix}/var/cache/activemq/data"
+ACTIVEMQ_CONF="${prefix}/etc/activemq"
+ACTIVEMQ_USER="${user}"
+ACTIVEMQ_PIDFILE="${prefix}/var/run/activemq/${name}.pid"
+ACTIVEMQ_CLASSPATH="${prefix}/usr/activemq/lib:${prefix}/usr/activemq/bin/activemq.jar"
+
+export ACTIVEMQ_HOME ACTIVEMQ_DATA ACTIVEMQ_CONF ACTIVEMQ_USER ACTIVEMQ_PIDFILE ACTIVEMQ_CLASSPATH

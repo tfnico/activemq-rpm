@@ -1,13 +1,13 @@
-#!/bin/sh
+#!/bin/sh -e
 
-dir="PREFIX"
-user="activemq"
-cmd="java -Dactivemq.home=PREFIX -Dactivemq.base=PREFIX -Dcom.sun.management.jmxremote -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Xmx512m -Djava.library.path=/usr/lib:/usr/lib64 -classpath  PREFIX/bin/activemq.jar org.apache.activemq.console.Main start"
+prefix=`rpm -qa --queryformat '%{instprefixes}' c07p_activemq`
+user="y7pbamq"
+cmd="java -Dactivemq.home=${prefix} -Dactivemq.base=${prefix} -Dcom.sun.management.jmxremote -Dorg.apache.activemq.UseDedicatedTaskRunner=false -Xmx512m -Djava.library.path=/usr/lib:/usr/lib64 -classpath ${prefix}/usr/activemq/bin/activemq.jar org.apache.activemq.console.Main start"
 
 name=`basename $0`
-pid_file="PREFIX/run/$name.pid"
-stdout_log="PREFIX/log/$name.log"
-stderr_log="PREFIX/log/$name.err"
+pid_file="${prefix}/var/run/activemq/${name}.pid"
+stdout_log="${prefix}/var/log/activemq/${name}.log"
+stderr_log="${prefix}/var/log/activemq/${name}.err"
 
 get_pid() {
     cat "$pid_file"    

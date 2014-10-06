@@ -62,13 +62,13 @@
                     <list>
                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
                             <property name="contextPath" value="/admin" />
-                            <property name="resourceBase" value="${activemq.home}/webapps/admin" />
+                            <property name="resourceBase" value="${activemq.home}/usr/activemq/webapps/admin" />
                             <property name="logUrlOnStart" value="true" />
                         </bean>
                         <!--
                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
                             <property name="contextPath" value="/fileserver" />
-                            <property name="resourceBase" value="${activemq.home}/webapps/fileserver" />
+                            <property name="resourceBase" value="${activemq.home}/usr/activemq/webapps/fileserver" />
                             <property name="logUrlOnStart" value="true" />
                             <property name="parentLoaderPriority" value="true" />
                         </bean>
@@ -76,14 +76,14 @@
                         <!--
                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
                             <property name="contextPath" value="/demo" />
-                            <property name="resourceBase" value="${activemq.home}/webapps-demo/demo" />
+                            <property name="resourceBase" value="${activemq.home}/usr/activemq/webapps-demo/demo" />
                             <property name="logUrlOnStart" value="true" />
                         </bean>
                         -->
                         <!-- TODO: Consider disabling this context -->
                         <bean class="org.eclipse.jetty.webapp.WebAppContext">
                             <property name="contextPath" value="/api" />
-                            <property name="resourceBase" value="${activemq.home}/webapps/api" />
+                            <property name="resourceBase" value="${activemq.home}/usr/activemq/webapps/api" />
                             <property name="logUrlOnStart" value="true" />
                         </bean>
                         <bean class="org.eclipse.jetty.server.handler.ResourceHandler">
@@ -93,7 +93,7 @@
                                     <value>index.html</value>
                                 </list>
                             </property>
-                            <property name="resourceBase" value="${activemq.home}/webapps/" />
+                            <property name="resourceBase" value="${activemq.home}/usr/activemq/webapps/" />
                         </bean>
                         <bean id="defaultHandler" class="org.eclipse.jetty.server.handler.DefaultHandler">
                             <property name="serveIcon" value="false" />

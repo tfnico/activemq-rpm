@@ -19,27 +19,32 @@ Prefix: %{package_prefix}
 Version: 05.09.01
 Release: 00
 License: ASL 2.0
-URL: http://activemq.apache.org/
 Group: System Environment/Daemons
-Buildroot: %{_tmppath}/%{dpag_name}-%{version}-%{release}-root
-BuildArch: noarch
+URL: http://activemq.apache.org/
+Source: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
+#Source1: activemq.init.rh
 
 Requires(pre): /usr/sbin/useradd
 #Requires: tanukiwrapper >= 3.5.9
-
+Requires: jdk
 Provides: %{rhel_name} = %{rhel_version}
 
-Source: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apache-activemq-%{rhel_version}-bin.tar.gz
-#Source1: activemq.init.rh
 Source2: activemq.xml
 Source3: activemq.log4j.properties
 Source4: activemq.jetty.xml
 Source5: activemq.credentials.properties
 Source6: activemq.jetty-realm.properties
 Source7: activemq-wrapper.conf
+Buildroot: %{_tmppath}/%{dpag_name}-%{version}-%{release}-root
+BuildArch: noarch
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
-Source10: start-activemq-console
+Source10: activemq.default
+
+%define homedir %{package_prefix}%{_prefix}/%{rhel_name}
+%define libdir %{homedir}/lib
+%define datadir %{package_prefix}/var/cache/%{rhel_name}
+%define docsdir %{package_prefix}/usr/share/doc/%{rhel_name}-%{version}
 
 %description
 ApacheMQ is a JMS Compliant Messaging System
@@ -50,97 +55,74 @@ mkdir -p %{package_prefix}
 getent passwd %{username} >/dev/null || \
   useradd -g %{usergroup} -M -s /sbin/nologin \
     -d %{package_prefix} -c "DPAG PI ActiveMQ" %{username}
-chown %{username}:%{usergroup} %{package_prefix}
-exit 0
-
-
 
 %prep
 %setup -q -n apache-activemq-%{rhel_version}
 
 %build
 
-
 %install
 rm -rf $RPM_BUILD_ROOT
-
-
 install --directory ${RPM_BUILD_ROOT}
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/bin
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/docs
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/lib
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/webapps
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/data
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/data/data
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/log/%{name}
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/run/%{name}
-install --directory ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_bindir}
+install --directory ${RPM_BUILD_ROOT}%{homedir}
+install --directory ${RPM_BUILD_ROOT}%{homedir}/bin
+install --directory ${RPM_BUILD_ROOT}%{docsdir}
+install --directory ${RPM_BUILD_ROOT}%{libdir}
+install --directory ${RPM_BUILD_ROOT}%{homedir}/webapps
+install --directory ${RPM_BUILD_ROOT}%{datadir}
+install --directory ${RPM_BUILD_ROOT}%{datadir}/data
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_localstatedir}/log/%{rhel_name}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_localstatedir}/run/%{rhel_name}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}
+install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/default
 #install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
-install %{SOURCE2} ${RPM_BUILD_ROOT}%{package_prefix}/conf
-install %{SOURCE3} ${RPM_BUILD_ROOT}%{package_prefix}/conf
-install %{SOURCE4} ${RPM_BUILD_ROOT}%{package_prefix}/conf
-install %{SOURCE5} ${RPM_BUILD_ROOT}%{package_prefix}/conf
-install %{SOURCE6} ${RPM_BUILD_ROOT}%{package_prefix}/conf
-install %{SOURCE7} ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE2} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
+install %{SOURCE3} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/log4j.properties
+install %{SOURCE4} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
+install %{SOURCE5} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
+install %{SOURCE6} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
+install %{SOURCE7} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
 
 
 # lib file for postgresql jdbc driver
-install  %{SOURCE8} ${RPM_BUILD_ROOT}%{package_prefix}/lib
+install %{SOURCE8} ${RPM_BUILD_ROOT}%{libdir}
 
 # SSL Server certificate
-install %{SOURCE9}  ${RPM_BUILD_ROOT}%{package_prefix}/conf
+install %{SOURCE9} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-broker.ks
 
-
-
+# ActiveMQ default file
+install %{SOURCE10} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/default/activemq
 
 # startup script
 #install bin/activemq ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
 #install %{_sourcedir}/activemq.init.rh ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
 # Bin and doc dirs
-install *.txt ${RPM_BUILD_ROOT}%{package_prefix}/docs
+install *.txt ${RPM_BUILD_ROOT}%{docdir}
 #install *.html ${RPM_BUILD_ROOT}%{package_prefix}/docs
 #cp -r docs ${RPM_BUILD_ROOT}%{package_prefix}/docs
 
 
 #Install our custom launcher script:
-install %{SOURCE10} ${RPM_BUILD_ROOT}%{package_prefix}/bin
-# note that we should still search replace DEFAULTPREFIX with whatever prefix is during build.
-# INSTALLPREFIX
-
-
-
-install bin/activemq.jar  ${RPM_BUILD_ROOT}%{package_prefix}/bin
-
-install bin/activemq-admin ${RPM_BUILD_ROOT}%{package_prefix}/bin
-
-install bin/activemq  ${RPM_BUILD_ROOT}%{package_prefix}/bin
-
-#%{__ln_s} -f %{package_prefix}/bin/activemq-admin ${RPM_BUILD_ROOT}%{_bindir}
+install bin/activemq.jar  ${RPM_BUILD_ROOT}%{homedir}/bin
+install bin/activemq-admin ${RPM_BUILD_ROOT}%{homedir}/bin
+install bin/activemq  ${RPM_BUILD_ROOT}%{homedir}/bin
+%{__ln_s} %{homedir}/bin/activemq-admin ${RPM_BUILD_ROOT}%{package_prefix}%{_bindir}
+%{__ln_s} %{package_prefix}%{_sysconfdir} ${RPM_BUILD_ROOT}%{homedir}%{_sysconfdir}
 
 # Runtime directory
-cp -r lib/* ${RPM_BUILD_ROOT}%{package_prefix}/lib
-cp -r webapps/admin ${RPM_BUILD_ROOT}%{package_prefix}/webapps
-
-
+cp -r lib/* ${RPM_BUILD_ROOT}%{libdir}
+cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
 
 %post
 # install activemq (but don't activate)
 #/sbin/chkconfig --add %{name}
-echo "Installed activemq under ${RPM_INSTALL_PREFIX}"
-# Correct paths in start script
-
-#First we need to escape all the slashes in the prefix path:
-ESCAPED_PREFIX=$(echo ${RPM_INSTALL_PREFIX}| sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')
-
-#Now correct the paths in the istart  script
-sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-console
 
 %preun
 #if [ $1 = 0 ]; then
-#    [ -f /var/lock/subsys/%{name} ] && %{_initrddir}/%{name} stop
+#    [ -f %{package_prefix}/var/lock/subsys/%{rhel_name} ] && %{_initrddir}/%{rhel_name} stop
 #    [ -f %{_initrddir}/%{name} ] && /sbin/chkconfig --del %{name}
 #fi
 
@@ -151,28 +133,23 @@ sed -i s/PREFIX/$ESCAPED_PREFIX/g ${RPM_INSTALL_PREFIX}/bin/start-activemq-conso
 rm -rf $RPM_BUILD_ROOT
 
 
-
 %files
 %defattr(-,root,root)
-%dir %{package_prefix}
-%{package_prefix}/bin
-%{package_prefix}/webapps
-%{package_prefix}/conf
-%{package_prefix}/lib
-%{package_prefix}/docs
-
-%docdir %{package_prefix}/docs
-
-%attr(755,%{username},%{usergroup}) %dir %{package_prefix}/log
-%attr(755,%{username},%{usergroup}) %dir %{package_prefix}/data/data
-#%attr(755,activemq,activemq) %dir %{_localstatedir}/run/%{name}
-#%attr(755,root,root) %{_initrddir}/%{name}
-#%config(noreplace) %{_sysconfdir}/%{_name}/activemq.xml
-#%config(noreplace) %{_sysconfdir}/%{_name}/activemq-wrapper.conf
-#%config(noreplace) %attr(750,root,activemq) %{_sysconfdir}/%{_name}/credentials.properties
-#%config(noreplace) %{_sysconfdir}/%{_name}/jetty.xml
-#%config(noreplace) %{_sysconfdir}/%{_name}/jetty-realm.properties
-#%config(noreplace) %{_sysconfdir}/%{_name}/log4j.properties
+%attr(755,root,root) %{package_prefix}%{_bindir}/activemq-admin
+%{homedir}
+%docdir %{docsdir}
+%{docsdir}
+%attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/log/%{rhel_name}
+%attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/run/%{rhel_name}
+%attr(755,%{username},%{usergroup}) %dir %{datadir}/data
+%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
+%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
+%config %attr(750,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
+%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
+%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
+%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/log4j.properties
+%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-broker.ks
+%config %{package_prefix}%{_sysconfdir}/default/activemq
 
 %changelog
 * Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 05.09.01
