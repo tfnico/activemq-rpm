@@ -109,11 +109,18 @@
 
             http://activemq.apache.org/persistence.html
         -->
+        <!-- use the PostgreSQL persistence bean (configuration see below)-->
+    <!--
         <persistenceAdapter>
-		<!-- use the PostgreSQL persistence bean (configuration see below)-->
+
         	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds" lockKeepAlivePeriod="10000"/>
 	</persistenceAdapter>
+-->
+        <!-- Due to unstable postgres connection, configure Produktion-Cluster for now to use a single ActiveMQ without stand-by -->
 
+         <persistenceAdapter>
+            <kahaDB directory="${activemq.data}/kahadb"/>
+        </persistenceAdapter>
 
           <!--
             The systemUsage controls the maximum amount of space the broker will
