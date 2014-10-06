@@ -39,6 +39,7 @@ BuildArch: noarch
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
 Source10: activemq.default
+Patch1: activemq.defaultfile-patch
 
 %define homedir %{package_prefix}%{_prefix}/%{rhel_name}
 %define libdir %{homedir}/lib
@@ -52,11 +53,12 @@ ApacheMQ is a JMS Compliant Messaging System
 getent group %{usergroup} >/dev/null || groupadd %{usergroup}
 mkdir -p %{package_prefix}
 getent passwd %{username} >/dev/null || \
-  useradd -g %{usergroup} -M -s /sbin/nologin \
+  useradd -g %{usergroup} -M -s /bin/bash \
     -d %{package_prefix} -c "DPAG PI ActiveMQ" %{username}
 
 %prep
 %setup -q -n apache-activemq-%{rhel_version}
+%patch1 -p1
 
 %build
 
