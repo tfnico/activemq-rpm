@@ -151,7 +151,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{package_prefix}%{_sysconfdir}/default/activemq
 
 %changelog
-* Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 05.09.01
+* Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 05.09.01-00
 - Update to activemq 5.9.1
 - Made relocatable
 - Remove tanukiwrapper dependency (launch as standalone dist)
