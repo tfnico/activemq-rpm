@@ -34,7 +34,7 @@ Source3: activemq.log4j.properties
 Source4: activemq.jetty.xml
 Source5: activemq.credentials.properties
 Source6: activemq.jetty-realm.properties
-Source7: activemq-wrapper.conf
+#Source7: activemq-wrapper.conf
 BuildArch: noarch
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
@@ -83,7 +83,7 @@ install %{SOURCE3} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}
 install %{SOURCE4} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
 install %{SOURCE5} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
 install %{SOURCE6} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
-install %{SOURCE7} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
+#install %{SOURCE7} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
 
 
 # lib file for postgresql jdbc driver
@@ -142,7 +142,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/run/%{rhel_name}
 %attr(755,%{username},%{usergroup}) %dir %{datadir}/data
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
-%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
+#%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
 %config %attr(640,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
