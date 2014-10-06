@@ -39,6 +39,7 @@ BuildArch: noarch
 Source8: postgresql-9.3-1102.jdbc4.jar
 Source9: activemq-broker.ks
 Source10: activemq.default
+Source11: activemq.init
 Patch1: activemq.defaultfile-patch
 
 %define homedir %{package_prefix}%{_prefix}/%{rhel_name}
@@ -77,7 +78,7 @@ install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_localstatedir}/log/%{rh
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_localstatedir}/run/%{rhel_name}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/default
-#install --directory ${RPM_BUILD_ROOT}%{_initrddir}
+install --directory ${RPM_BUILD_ROOT}%{_initrddir}
 
 # Config files
 install %{SOURCE2} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
@@ -99,7 +100,8 @@ install %{SOURCE10} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/default/act
 
 # startup script
 #install bin/activemq ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
-#install %{_sourcedir}/activemq.init.rh ${RPM_BUILD_ROOT}%{_initrddir}/%{name}
+install -m 755 %{SOURCE11} ${RPM_BUILD_ROOT}%{_initrddir}/%{rhel_name}
+
 # Bin and doc dirs
 install *.txt ${RPM_BUILD_ROOT}%{docdir}
 #install *.html ${RPM_BUILD_ROOT}%{package_prefix}/docs
@@ -151,6 +153,7 @@ rm -rf $RPM_BUILD_ROOT
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/log4j.properties
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-broker.ks
 %config %{package_prefix}%{_sysconfdir}/default/activemq
+%{_initrddir}/%{rhel_name}
 
 %changelog
 * Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 05.09.01-00

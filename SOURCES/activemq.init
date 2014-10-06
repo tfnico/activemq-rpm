@@ -1,0 +1,63 @@
+#! /bin/sh
+#
+# activemq   Apache ActiveMQ Middleware Service
+#
+# chkconfig:    345 24 76
+#
+# description:  Apache ActiveMQ Middleware Service
+#
+### BEGIN INIT INFO
+# Provides:          activemq
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start daemon at boot time
+# Description:       Enable service provided by daemon.
+### END INIT INFO
+
+# Source function library
+. /etc/init.d/functions
+
+# Application
+APP_NAME="activemq"
+APP_LONG_NAME="ActiveMQ Broker"
+
+# The following two lines are used by the chkconfig command. Change as is
+#  appropriate for your application.  They should remain commented.
+# chkconfig: 2345 20 80
+# description: @app.long.name@
+
+# Do not modify anything beyond this point
+#-----------------------------------------------------------------------------
+
+ACTIVEMQ_SCRIPT="/home/dpag7p/c07p_activemq/usr/activemq/bin/activemq"
+
+RETVAL=0
+
+# Get the fully qualified path to the script
+case "$1" in
+    start)
+        $ACTIVEMQ_SCRIPT start
+        ;;
+    stop)
+	$ACTIVEMQ_SCRIPT stop
+        ;;
+    status)
+	$ACTIVEMQ_SCRIPT status
+	# fix invalid LSB return value
+	status=$?
+	if [ $status -eq 0 ]; then
+		RETVAL=0
+	elif [ $status -eq 1 ]; then
+		RETVAL=3
+	else	
+		RETVAL=$status
+	fi
+	;;
+    *)
+	echo $"Usage: $0 {start|stop|status}"
+	RETVAL=2
+esac
+
+exit $RETVAL
