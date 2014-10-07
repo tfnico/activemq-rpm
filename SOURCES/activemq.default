@@ -3,6 +3,8 @@ user="y7pbamq"
 
 name=`basename $0`
 
+JAVA_HOME="/home/dpag7p/c07p_java/current"
+
 ACTIVEMQ_BASE="${prefix}"
 ACTIVEMQ_HOME="${prefix}/usr/activemq"
 ACTIVEMQ_DATA="${prefix}/var/cache/activemq/data"

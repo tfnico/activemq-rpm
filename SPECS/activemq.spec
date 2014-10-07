@@ -79,6 +79,7 @@ install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_localstatedir}/run/%{rh
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/default
 install --directory ${RPM_BUILD_ROOT}%{_initrddir}
+install --directory ${RPM_BUILD_ROOT}%{homedir}/usr/activemq/tmp
 
 # Config files
 install %{SOURCE2} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
@@ -121,13 +122,14 @@ cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
 
 %post
 # install activemq (but don't activate)
-#/sbin/chkconfig --add %{name}
+/sbin/chkconfig --add %{rhel_name}
 
 %preun
 #if [ $1 = 0 ]; then
 #    [ -f %{package_prefix}/var/lock/subsys/%{rhel_name} ] && %{_initrddir}/%{rhel_name} stop
 #    [ -f %{_initrddir}/%{name} ] && /sbin/chkconfig --del %{name}
 #fi
+/sbin/chkconfig --del %{rhel_name}
 
 %postun
 /bin/find %{package_prefix} -depth -type d -exec rmdir --ignore-fail-on-non-empty {} \;
@@ -145,6 +147,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/log/%{rhel_name}
 %attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/run/%{rhel_name}
 %attr(755,%{username},%{usergroup}) %dir %{datadir}/data
+%attr(750,%{username},%{usergroup}) %dir %{homedir}/usr/activemq/tmp
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
 #%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
 %config %attr(640,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
