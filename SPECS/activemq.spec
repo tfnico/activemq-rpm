@@ -79,7 +79,7 @@ install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_localstatedir}/run/%{rh
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}
 install --directory ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/default
 install --directory ${RPM_BUILD_ROOT}%{_initrddir}
-install --directory ${RPM_BUILD_ROOT}%{homedir}/usr/activemq/tmp
+install --directory ${RPM_BUILD_ROOT}%{homedir}/tmp
 
 # Config files
 install %{SOURCE2} ${RPM_BUILD_ROOT}%{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
@@ -147,7 +147,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/log/%{rhel_name}
 %attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/run/%{rhel_name}
 %attr(755,%{username},%{usergroup}) %dir %{datadir}/data
-%attr(750,%{username},%{usergroup}) %dir %{homedir}/usr/activemq/tmp
+%attr(750,%{username},%{usergroup}) %dir %{homedir}/tmp
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
 #%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
 %config %attr(640,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
