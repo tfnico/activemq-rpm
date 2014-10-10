@@ -131,16 +131,16 @@
         <systemUsage>
             <systemUsage>
                 <memoryUsage>
-                    <memoryUsage limit="1024 mb"/>
+                    <memoryUsage limit="768 mb"/>
                 </memoryUsage>
                 <storeUsage>
-                    <storeUsage limit="512 mb" name="foo"/>
+                    <storeUsage limit="1024 mb" name="foo"/>
                 </storeUsage>
                 <tempUsage>
-                    <tempUsage limit="100 mb"/>
+                    <tempUsage limit="1024 mb"/>
                 </tempUsage>
                 <jobSchedulerUsage>
-                    <jobSchedulerUsage limit="100 mb"/>
+                    <jobSchedulerUsage limit="1024 mb"/>
                 </jobSchedulerUsage>
             </systemUsage>
         </systemUsage>
