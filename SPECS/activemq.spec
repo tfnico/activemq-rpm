@@ -57,6 +57,12 @@ getent passwd %{username} >/dev/null || \
   useradd -g %{usergroup} -M -s /bin/bash \
     -d %{package_prefix} -c "DPAG PI ActiveMQ" %{username}
 
+# add maintenance group and user
+getent group uni7pwar  >/dev/null || groupadd uni7pwar
+getent passwd y7pbwar >/dev/null || \
+	useradd -g uni7pwar -M -s /bin/bash -d /home/dpag7p -c "DPAG PI Maintenance User" y7pbwar
+usermod -G %{usergroup} y7pbwar
+
 %prep
 %setup -q -n apache-activemq-%{rhel_version}
 %patch1 -p1
