@@ -111,7 +111,7 @@
         -->
         <!-- Default Cluster configuration: use the PostgreSQL persistence bean (configuration see below) -->
         <persistenceAdapter>
-        	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds" lockKeepAlivePeriod="10000"/>
+        	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds" lockKeepAlivePeriod="10000" createTablesOnStartup="false"/>
 	    </persistenceAdapter>
     
       <!-- alternative cluster configuration LeaseDatabaseLocker. Caution: set unique leaseHolderId for each instance! -->
