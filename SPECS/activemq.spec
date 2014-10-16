@@ -25,6 +25,9 @@ Source: http://www.apache.org/dist/activemq/apache-activemq/%{rhel_version}/apac
 #Source1: activemq.init.rh
 
 Requires(pre): /usr/sbin/useradd
+Requires(pre): /usr/sbin/groupadd
+Requires(pre): /usr/sbin/usermod
+Requires: sudo
 #Requires: tanukiwrapper >= 3.5.9
 Requires: jdk
 Provides: %{rhel_name} = %{rhel_version}
