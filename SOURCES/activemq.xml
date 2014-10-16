@@ -109,18 +109,28 @@
 
             http://activemq.apache.org/persistence.html
         -->
-        <!-- use the PostgreSQL persistence bean (configuration see below)-->
-    <!--
+        <!-- Default Cluster configuration: use the PostgreSQL persistence bean (configuration see below) -->
         <persistenceAdapter>
-
         	<jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds" lockKeepAlivePeriod="10000"/>
-	</persistenceAdapter>
--->
-        <!-- Due to unstable postgres connection, configure Produktion-Cluster for now to use a single ActiveMQ without stand-by -->
-
+	    </persistenceAdapter>
+    
+      <!-- alternative cluster configuration LeaseDatabaseLocker. Caution: set unique leaseHolderId for each instance! -->
+       <!--
+       <persistenceAdapter>
+         <jdbcPersistenceAdapter dataDirectory="activemq-data" dataSource="#postgres-ds" lockKeepAlivePeriod="5000">
+            <locker>
+              <lease-database-locker lockAcquireSleepInterval="10000" leaseHolderId="1" />
+            </locker>
+         </jdbcPersistenceAdapter>
+       </persistenceAdapter>
+       -->
+       
+        <!-- Without postgres connection: use kahadb, configure to use a single ActiveMQ without stand-by, no cluster -->
+        <!--
          <persistenceAdapter>
             <kahaDB directory="${activemq.data}/kahadb"/>
         </persistenceAdapter>
+        -->
 
           <!--
             The systemUsage controls the maximum amount of space the broker will
@@ -164,11 +174,20 @@
 
     <!-- PostgreSQL adapter, needs to point to the correct server -->
     <bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource">
-      <property name="serverName" value="localhost"/>
+      
+      <!-- (Produktion) PSI-DB-01 : 10.160.54.171 -->
+      <property name="serverName" value="10.160.54.171"/>
+      
+      <!-- (Referenz) PSI-DB-R-01 : 10.164.42.11 -->
+      <!--<property name="serverName" value="10.164.42.11"/>-->
+      
+      <!-- (TCB) PSA-D9001 (DB 1) : 10.192.129.208 -->
+      <!-- <property name="serverName" value="10.192.129.208"/>-->
+      
       <property name="databaseName" value="activemq"/>
       <property name="portNumber" value="5432"/>
       <property name="user" value="activemq"/>
-      <property name="password" value="activemq"/>
+      <property name="password" value="frocvier"/>
       <property name="dataSourceName" value="postgres"/>
       <property name="initialConnections" value="1"/>
       <property name="maxConnections" value="10"/>
