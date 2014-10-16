@@ -176,13 +176,13 @@
     <bean id="postgres-ds" class="org.postgresql.ds.PGPoolingDataSource">
       
       <!-- (Produktion) PSI-DB-01 : 10.160.54.171 -->
-      <property name="serverName" value="10.160.54.171"/>
+      <property name="serverName" value="PSI-DB-01"/>
       
       <!-- (Referenz) PSI-DB-R-01 : 10.164.42.11 -->
-      <!--<property name="serverName" value="10.164.42.11"/>-->
+      <!--<property name="serverName" value="PSI-DB-R-01"/>-->
       
       <!-- (TCB) PSA-D9001 (DB 1) : 10.192.129.208 -->
-      <!-- <property name="serverName" value="10.192.129.208"/>-->
+      <!-- <property name="serverName" value="PSA-D9001"/>-->
       
       <property name="databaseName" value="activemq"/>
       <property name="portNumber" value="5432"/>
