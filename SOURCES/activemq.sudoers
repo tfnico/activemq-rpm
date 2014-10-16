@@ -1,0 +1,1 @@
+y7pbamq ALL=NOPASSWD:/sbin/service activemq stop,/sbin/service activemq start,/sbin/service activemq restart,/sbin/service activemq status
