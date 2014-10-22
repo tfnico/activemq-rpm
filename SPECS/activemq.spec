@@ -8,6 +8,8 @@
 # y7pbamp:uni7pamq
 %define username  y%{project_id}bamq
 %define usergroup uni%{project_id}amq
+%define userid 536392
+%define groupid 536393
 
 
 #Avoid doing arcane stuff with jars, silly rpm
@@ -55,16 +57,16 @@ Patch1: activemq.defaultfile-patch
 ApacheMQ is a JMS Compliant Messaging System
 
 %pre
-getent group %{usergroup} >/dev/null || groupadd %{usergroup}
+getent group %{usergroup} >/dev/null || groupadd -g %{groupid} %{usergroup}
 mkdir -p %{package_prefix}
 getent passwd %{username} >/dev/null || \
-  useradd -g %{usergroup} -M -s /bin/bash \
+  useradd -u %{userid} -g %{usergroup} -M -s /bin/bash \
     -d %{package_prefix} -c "DPAG PI ActiveMQ" %{username}
 
 # add maintenance group and user
-getent group uni7pwar  >/dev/null || groupadd uni7pwar
+getent group uni7pwar  >/dev/null || groupadd -g 536399 uni7pwar
 getent passwd y7pbwar >/dev/null || \
-	useradd -g uni7pwar -M -s /bin/bash -d /home/dpag7p -c "DPAG PI Maintenance User" y7pbwar
+	useradd -u 536398 -g uni7pwar -M -s /bin/bash -d /home/dpag7p -c "DPAG PI Maintenance User" y7pbwar
 usermod -a -G %{usergroup} y7pbwar
 
 %prep
