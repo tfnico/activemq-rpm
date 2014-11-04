@@ -165,9 +165,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(750,%{username},%{usergroup}) %dir %{homedir}/tmp
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
 #%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
-%config %attr(640,root,%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
-%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
-%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
+%config %attr(600,%{username},%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
+%config %attr(600,%{username},%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
+%config %attr(600,%{username},%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty.xml
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/log4j.properties
 %config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-broker.ks
 %config %{package_prefix}%{_sysconfdir}/default/activemq
