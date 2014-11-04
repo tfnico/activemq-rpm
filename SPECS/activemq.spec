@@ -163,7 +163,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(775,%{username},%{usergroup}) %dir %{package_prefix}%{_localstatedir}/run/%{rhel_name}
 %attr(755,%{username},%{usergroup}) %dir %{datadir}/data
 %attr(750,%{username},%{usergroup}) %dir %{homedir}/tmp
-%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
+%config %attr(600,%{username},%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq.xml
 #%config %{package_prefix}%{_sysconfdir}/%{rhel_name}/activemq-wrapper.conf
 %config %attr(600,%{username},%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/credentials.properties
 %config %attr(600,%{username},%{usergroup}) %{package_prefix}%{_sysconfdir}/%{rhel_name}/jetty-realm.properties
