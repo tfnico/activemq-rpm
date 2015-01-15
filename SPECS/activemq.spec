@@ -155,6 +155,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
+%attr(750,%{username},%{usergroup}) %dir %{package_prefix}
 %attr(755,root,root) %{package_prefix}%{_bindir}/activemq-admin
 %{homedir}
 %docdir %{docsdir}
@@ -175,7 +176,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/sudoers.d/activemq
 
 %changelog
-* Tue Sep 09 2014 Thomas Ferris Nicolaisen * <thomas.nicolaisen@viaboxx.de> - 05.09.01-00
+* Thu Jan 15 2015 Thomas Ferris Nicolaisen <thomas.nicolaisen@viaboxx.de> - 05.09.01-01
+- Restrict packge top level directory to group only
+
+* Tue Sep 09 2014 Thomas Ferris Nicolaisen <thomas.nicolaisen@viaboxx.de> - 05.09.01-00
 - Update to activemq 5.9.1
 - Made relocatable
 - Remove tanukiwrapper dependency (launch as standalone dist)
