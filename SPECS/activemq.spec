@@ -65,13 +65,14 @@ getent passwd %{username} >/dev/null || \
 
 # add maintenance group and user
 getent group uni7pwar  >/dev/null || groupadd -g 536399 uni7pwar
-getent passwd y7pbwar >/dev/null || \
+getent passwd y7pbwar >/dev/null || {
     y7pbwar_home=/home/dpag7p/y7pbwar
 	useradd -u 536398 -g uni7pwar -M -s /bin/bash -d $y7pbwar_home -c "DPAG PI Maintenance User" y7pbwar
     mkdir -p $y7pbwar_home
     chown y7pbwar:uni7pwar $y7pbwar_home
     chmod 0700 $y7pbwar_home
-usermod -a -G %{usergroup} y7pbwar
+    usermod -a -G %{usergroup} y7pbwar
+}
 
 %prep
 %setup -q -n apache-activemq-%{rhel_version}
