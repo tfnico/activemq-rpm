@@ -152,11 +152,19 @@ cp -r webapps/admin ${RPM_BUILD_ROOT}%{homedir}/webapps
 /sbin/chkconfig --del %{rhel_name}
 
 %postun
-/bin/find %{package_prefix} -depth -type d -exec rmdir --ignore-fail-on-non-empty {} \;
+case "$*" in
+  0)
+    echo "Uninstalling, so cleanup will be performed"
+    /bin/find %{package_prefix} -depth -type d -exec rmdir --ignore-fail-on-non-empty {} \;
+    ;;
+  1)
+    echo "Upgrading, so no cleanup will be performed"
+    ;;
+  *) echo case "$*" not handled in preun
+esac
 
 %clean
 rm -rf $RPM_BUILD_ROOT
-
 
 %files
 %defattr(-,root,root)
@@ -183,6 +191,8 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Thu Jan 15 2015 Thomas Ferris Nicolaisen <thomas.nicolaisen@viaboxx.de> - 05.09.01-01
 - Restrict packge top level directory to group only
+- Avoid removing empty directories during upgrade
+- Recreate removed dirs during init after faulty upgrade
 
 * Tue Sep 09 2014 Thomas Ferris Nicolaisen <thomas.nicolaisen@viaboxx.de> - 05.09.01-00
 - Update to activemq 5.9.1

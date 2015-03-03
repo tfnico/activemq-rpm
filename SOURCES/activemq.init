@@ -35,9 +35,23 @@ ACTIVEMQ_SCRIPT="/home/dpag7p/c07p_activemq/usr/activemq/bin/activemq"
 
 RETVAL=0
 
+restore_dirs() {
+    activemq_tmp_dir=/home/dpag7p/c07p_activemq/usr/activemq/tmp
+    mkdir -p $activemq_tmp_dir
+    chown y7pbamq:uni7pamq $activemq_tmp_dir
+    chmod 755 $activemq_tmp_dir
+
+    activemq_run_dir=/home/dpag7p/c07p_activemq/var/run/activemq
+    mkdir -p $activemq_run_dir
+    chown y7pbamq:uni7pamq $activemq_run_dir
+    chmod 755 $activemq_run_dir
+
+}
+
 # Get the fully qualified path to the script
 case "$1" in
     start)
+        restore_dirs
         $ACTIVEMQ_SCRIPT start
         ;;
     stop)
